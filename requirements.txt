@@ -1,0 +1,4 @@
+Django
+south
+mysql-python
+pyyaml
