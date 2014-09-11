@@ -1,6 +1,6 @@
 from unittest import case
 import MySQLdb
-from django.shortcuts import render
+from django.http.response import HttpResponse
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -8,23 +8,23 @@ from django.template import RequestContext
 from .forms import UploadFileForm
 import yaml
 from south.db import db
-from django.db.models.fields import CharField, IntegerField, DateField
+from django.db.models.fields import CharField, IntegerField, DateField, AutoField
 import time
 
 from dynmod.models import Row, Table
+import json
+import simplejson
+from django.db import connections
+# from django.core.serializers.json import DjangoJSONEncoder
 
 
 def create_new_model(fields, title, name):
-    # print(len(fields), title)
     create_table(fields, name, title)
 
 
 def create_table(fields, table_name, title):
-    # model_class = generate_my_model_class()
-    # fields = [(f.name, f) for f in ['a', 'b']]
-
     table_name += str(int(time.time()))
-    dynfields = []
+    dynfields = [('id', AutoField(primary_key=True))]
     type = None
     for field in fields:
         if field['type'] == 'char':
@@ -58,14 +58,50 @@ def make_models(yml):
         create_new_model(model['fields'], model['title'], name)
 
 
+def home(request):
+    tables = Table.objects.all()
+    return render_to_response('home.html', {'tables': tables})
+
+
+def get_table(request, table):
+    table_name = request.GET.get('table_name', None)
+
+    rows = Row.objects.filter(table_name=table_name)
+    # data = serializers.serialize('json', header)
+    header = []
+    header_dates = []
+    for row in rows:
+        header.append({'id': row.id, 'row_name': row.row_name, 'type': row.type, 'title': row.title})
+        if row.type == 'date':
+            header_dates.append(row.row_name)
+
+    cursor = connections['default'].cursor()
+    cursor.execute("SELECT * FROM " + table_name)
+
+    rows = dictfetchall(cursor)
+
+    for row in rows:
+        for head in header_dates:
+            row[head] = str(row[head])
+
+    response_data = simplejson.OrderedDict([
+        ('table_name', table_name),
+        ('header', header),
+        ('data', rows),
+        # ('users', simplejson.OrderedDict(self.getUsers(users_ids, region))),
+    ])
+    # data = json.dumps(result)
+    # return HttpResponse(data, content_type='application/json')
+    return HttpResponse(simplejson.dumps(response_data), content_type="application/json")
+
+
 def upload_file(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             yml = handle_uploaded_file(request.FILES['file'])
             make_models(yml)
-            # return render_to_response('uploaded.html', {'result': yml})
-            return HttpResponseRedirect('/admin/')
+            return HttpResponseRedirect('/')
     else:
         form = UploadFileForm()
 
@@ -81,3 +117,32 @@ def handle_uploaded_file(f):
         return yaml.load(f)
     except yaml.ScannerError:
         return 'ScannerError'
+
+
+def dictfetchall(cursor):
+    """Returns all rows from a cursor as a dict"""
+    desc = cursor.description
+    return [
+        dict(zip([col[0] for col in desc], row))
+        for row in cursor.fetchall()
+    ]
+
+
+def create(request, table_name):
+    params = request.GET
+    names = []
+    values = []
+    for name in params:
+        names.append(name)
+        values.append("'" + params.get(name) + "'")
+
+    cursor = connections['default'].cursor()
+    cursor.execute("INSERT INTO " + table_name + " (" + ", ".join(names) + ") VALUES (" + ", ".join(values) + ")")
+
+    response_data = simplejson.OrderedDict([
+        ('table_name', table_name),
+        ('params', params),
+        # ('data', rows),
+        # ('users', simplejson.OrderedDict(self.getUsers(users_ids, region))),
+    ])
+    return HttpResponse(simplejson.dumps(response_data), content_type="application/json")
