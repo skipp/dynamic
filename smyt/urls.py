@@ -11,4 +11,6 @@ urlpatterns = patterns('',
     url(r'^static/(?P<path>.*)$', 'django.views.static.serve'),
     url(r'^get/(?P<table>.*)/$', 'dynmod.views.get_table'),
     url(r'^create/(?P<table_name>.*)/$', 'dynmod.views.create'),
+    url(r'^post/row/$', 'dynmod.views.post_row'),
+    url(r'^delete/row/$', 'dynmod.views.delete_row'),
 )

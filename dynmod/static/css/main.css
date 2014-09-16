@@ -15,6 +15,11 @@ table {
 
 table td {
     min-width: 150px;
+    height: 27px;
+}
+
+td input {
+    width: 145px;
 }
 
 table td:first-child {
@@ -27,4 +32,8 @@ table td:first-child {
 
 .form input {
     margin-left: 10px;
+}
+
+.type-id-delete {
+    color: red;
 }

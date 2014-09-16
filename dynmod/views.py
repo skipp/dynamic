@@ -5,6 +5,7 @@ from django.http.response import HttpResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.views.decorators.csrf import csrf_exempt
 from .forms import UploadFileForm
 import yaml
 from south.db import db
@@ -12,10 +13,8 @@ from django.db.models.fields import CharField, IntegerField, DateField, AutoFiel
 import time
 
 from dynmod.models import Row, Table
-import json
 import simplejson
 from django.db import connections
-# from django.core.serializers.json import DjangoJSONEncoder
 
 
 def create_new_model(fields, title, name):
@@ -88,10 +87,7 @@ def get_table(request, table):
         ('table_name', table_name),
         ('header', header),
         ('data', rows),
-        # ('users', simplejson.OrderedDict(self.getUsers(users_ids, region))),
     ])
-    # data = json.dumps(result)
-    # return HttpResponse(data, content_type='application/json')
     return HttpResponse(simplejson.dumps(response_data), content_type="application/json")
 
 
@@ -142,7 +138,44 @@ def create(request, table_name):
     response_data = simplejson.OrderedDict([
         ('table_name', table_name),
         ('params', params),
-        # ('data', rows),
-        # ('users', simplejson.OrderedDict(self.getUsers(users_ids, region))),
+    ])
+    return HttpResponse(simplejson.dumps(response_data), content_type="application/json")
+
+
+@csrf_exempt
+def post_row(request):
+    params = dict(request.POST)
+    row_id = params.get('id')[0]
+    table_name = params.get('table_name')[0]
+    del params['table_name']
+    del params['id']
+
+    values = []
+    for param in params:
+        values.append(param + "='" + params[param][0] + "'")
+    value_string = ", ".join(values)
+
+    cursor = connections['default'].cursor()
+    cursor.execute("UPDATE " + table_name + " SET " + value_string + " WHERE id = " + row_id)
+
+    response_data = simplejson.OrderedDict([
+        ('table_name', table_name),
+        ('id', row_id),
+        ('params', params),
+    ])
+    return HttpResponse(simplejson.dumps(response_data), content_type="application/json")
+
+
+@csrf_exempt
+def delete_row(request):
+    row_id = request.POST.get('id')
+    table_name = request.POST.get('table_name')
+
+    cursor = connections['default'].cursor()
+    cursor.execute("DELETE FROM " + table_name + " WHERE id = " + row_id)
+
+    response_data = simplejson.OrderedDict([
+        ('table_name', table_name),
+        ('id', row_id),
     ])
     return HttpResponse(simplejson.dumps(response_data), content_type="application/json")

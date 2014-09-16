@@ -1,33 +1,19 @@
-<html>
-<head>
-    <title>Dynamic Models</title>
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-    <link href="/static/css/main.css" rel="stylesheet">
-</head>
-<body>
-{% include 'partials/header.html' %}
-<div class="container">
-    <div class="row col-md-4">
-        <ul class="list">
-            {% for table in tables %}
-                <li><a class="table-link" href="#table-{{ table.table_name }}">{{ table.title }}</a></li>
-            {% endfor %}
-        </ul>
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="container">
+        <div class="row col-md-4">
+            <ul class="list">
+                {% for table in tables %}
+                    <li><a class="table-link" href="#table-{{ table.table_name }}">{{ table.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="row col-md-8">
+            <table class="table-data" border="1">
+            </table>
+            <fieldset class="fieldset-data">
+            </fieldset>
+        </div>
     </div>
-    <div class="row col-md-8">
-
-        <table class="table-data" border="1">
-        </table>
-
-        <fieldset class="fieldset-data">
-        </fieldset>
-
-    </div>
-</div>
-<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-{#<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>#}
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-<script src="/static/js/main.js"></script>
-</body>
-</html>
+{% endblock %}
