@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Django settings for smyt project.
+Django settings for dynamic project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/
@@ -80,9 +80,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'smyt.urls'
+ROOT_URLCONF = 'dynamic.urls'
 
-WSGI_APPLICATION = 'smyt.wsgi.application'
+WSGI_APPLICATION = 'dynamic.wsgi.application'
 
 
 # Database
@@ -91,7 +91,7 @@ WSGI_APPLICATION = 'smyt.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'smyt',
+        'NAME': 'dynamic',
         'USER': 'root',
         'PASSWORD': 'qwerty'
     }
