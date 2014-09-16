@@ -25,6 +25,8 @@ MEDIA_ROOT = PROJECT_PATH + '/media/'
 
 STATIC_ROOT = autopath('static')
 
+STATIC_URL = '/static/'
+
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
 )
@@ -101,8 +103,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
-
-STATIC_URL = '/static/'
 
 ASSETS = (
     'favicon.ico',
