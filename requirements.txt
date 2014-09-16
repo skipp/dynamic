@@ -2,3 +2,5 @@ Django
 south
 mysql-python
 pyyaml
+gunicorn
+wsgiref
