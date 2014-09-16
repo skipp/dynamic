@@ -84,19 +84,6 @@ ROOT_URLCONF = 'dynamic.urls'
 
 WSGI_APPLICATION = 'dynamic.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dynamic',
-        'USER': 'root',
-        'PASSWORD': 'qwerty'
-    }
-}
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
@@ -124,3 +111,8 @@ ASSETS = (
 )
 
 MEDIA_URL = '/media/'
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
