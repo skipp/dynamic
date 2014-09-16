@@ -112,6 +112,16 @@ ASSETS = (
 
 MEDIA_URL = '/media/'
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'HOST': 'eu-cdbr-west-01.cleardb.com',
+        'NAME': 'heroku_e4d80d3d385c824',
+        'USER': 'b76c8e29a66d0a',
+        'PASSWORD': '9991163d'
+    }
+}
+
 try:
     from local_settings import *
 except ImportError:
