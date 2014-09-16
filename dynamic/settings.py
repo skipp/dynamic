@@ -17,6 +17,8 @@ import os
 def autopath(dirname=''):
     return os.path.join(os.path.split(os.path.dirname(__file__).replace('\\', '/'))[0], dirname)
 
+PROJECT_DIR = os.path.join(os.path.dirname(__file__), os.path.pardir)
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
@@ -25,27 +27,30 @@ MEDIA_ROOT = PROJECT_PATH + '/media/'
 
 STATIC_ROOT = autopath('static')
 
+# URL prefix for static files.
+# Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = '/static/'
 
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'templates'),
+# Additional locations of static files
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+    # Put strings here, like "/home/html/static" or "C:/www/django/static".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
 )
 
+# List of finder classes that know how to find static files in
+# various locations.
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
-# STATICFILES_DIRS = (
-#     # Put strings here, like "/home/html/static" or "C:/www/django/static".
-#     # Always use forward slashes, even on Windows.
-#     # Don't forget to use absolute paths, not relative paths.
-# )
-
-STATICFILES_DIRS = (
-    # os.path.join(BASE_DIR, "static"),
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'templates'),
 )
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -99,10 +104,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 ASSETS = (
     'favicon.ico',
